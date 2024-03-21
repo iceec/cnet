@@ -40,7 +40,7 @@ bool Parse::load_str(const string &name)
 
 void Parse::skip_white()
 {
-    while (m_str[m_idx] == ' ' || m_str[m_idx] == '\n' || m_str[m_idx] == '\t' || m_str[m_idx] == 'r')
+    while (m_str[m_idx] == ' ' || m_str[m_idx] == '\n' || m_str[m_idx] == '\t' || m_str[m_idx] == '\r')
         ++m_idx;
 }
 
@@ -94,7 +94,9 @@ Xml Parse::parse_element()
 {
     Xml ans;
     skip_white();
+  //  std::cout<<m_str[m_idx]<<std::endl;
     ans.set_name(parse_element_name());
+    //std::cout<<ans.name()<<std::endl;
     while (m_str[m_idx] != '\0')
     {
         skip_white();
@@ -111,6 +113,7 @@ Xml Parse::parse_element()
         else if (m_str[m_idx] == '>')
         {
             m_idx++;
+            skip_white();
             ans.set_text(parse_element_text());
         }
         else if (m_str[m_idx] == '<')
@@ -119,9 +122,15 @@ Xml Parse::parse_element()
             {
                 string endtag = "</" + ans.name() + ">";
                 size_t pos = m_str.find(endtag, m_idx);
-                if (pos == std::string::npos)
-                    f("</ has wrong");
+                if (pos == std::string::npos){
+                    // std::cout<<m_idx<<" "<<m_str[m_idx]<<std::endl;
+                   //  std::cout<<endtag<<std::endl;
+                    f("</ has wrong");      
+                }
+                    
                 m_idx = pos + endtag.size();
+                skip_white();
+               // std::cout<<m_str[m_idx]<<std::endl;
                 break;
             }
             else
@@ -138,8 +147,11 @@ Xml Parse::parse_element()
 
             string key = parse_element_attr_key();
             skip_white();
-            if (m_str[m_idx] != '=')
-                f("parse in parse = wrong");
+            if (m_str[m_idx] != '='){
+                //std::cout<<m_str[m_idx]<<' '<<m_idx<<std::endl;
+                 f("parse in parse = wrong");
+            }
+               
             m_idx++;
             skip_white();
             string val = parse_element_attr_val();
@@ -157,7 +169,7 @@ string Parse::parse_element_name()
     if (!(isalpha(m_str[m_idx]) || m_str[m_idx] == '_'))
         f("parse_element_name wrong");
     ++m_idx;
-    while (isalpha(m_str[m_idx]) || m_str[m_idx] == '_' || m_str[m_idx] == '-' || m_str[m_idx] == '.')
+    while (isalpha(m_str[m_idx]) || m_str[m_idx] == '_' || m_str[m_idx] == '-' || m_str[m_idx] == '.'||(m_str[m_idx] == ':'))
         ++m_idx;
     return m_str.substr(pos, m_idx - pos);
 }
@@ -183,7 +195,7 @@ string Parse::parse_element_attr_key()
     if (!(isalpha(m_str[m_idx]) || m_str[m_idx] == '_'))
         f("parse_element_key wrong");
 
-    while (isalpha(m_str[m_idx]) || m_str[m_idx] == '_' || m_str[m_idx] == '-' || m_str[m_idx] == '.')
+    while (isalpha(m_str[m_idx]) || m_str[m_idx] == '_' || m_str[m_idx] == '-' || m_str[m_idx] == '.'||m_str[m_idx] == ':')
         ++m_idx;
     return m_str.substr(pos, m_idx - pos);
 }

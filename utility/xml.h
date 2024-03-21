@@ -40,7 +40,7 @@ public:
     friend std::ostream & operator<<(std::ostream & ,const Xml & );
     void load(const string &name,bool is_file);
     void load_file(const string &filename);
-    void load_str(const string &name);
+    void load_str(const string &name); 
     void save(const string &name);
 
 
@@ -48,12 +48,18 @@ public:
     Xml & operator=(const Xml &);
 
 
+    using iterator=vector<Xml>::iterator;
+
+    iterator begin(){return m_children.begin();}
+
+    iterator end(){return m_children.end();}
+
+    
 
 
 
 
-
-private:
+public:
     string m_name;
     string m_text;
     unordered_map<string,value>m_attr;

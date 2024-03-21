@@ -23,6 +23,8 @@ Xml::Xml(Xml &&other)
 
 Xml &Xml::operator=(Xml &&other)
 {
+    if(this==&other)
+        return *this;
     clear();
     //  m_name=std::move(other.m_name);
     // m_text=std::move(other.m_text);
